@@ -1,0 +1,44 @@
+#!/bin/bash
+
+read -p "Enter the file name containing the list of packages: " filename
+
+
+if [[ ! -f $filename ]]; then
+echo "File not found!"
+exit 1
+fi
+
+mapfile -t packages < "$filename"
+
+if [[ ${#packages[@]} -eq 0 ]]; then
+echo "No packages listed in the file." 
+exit 0
+fi
+
+to_install=""
+already_installed=""
+
+for pkg in "${packages[@]}" ; do
+        if rpm -q "$pkg" &> /dev/null; then
+        already_inctalled="$already_inctalled $pkg"
+else
+to_install="$to_install $pkg"
+fi
+done
+                                      
+ if [[ -n $to_install ]]; then
+        echo "Installing missing packages: $to_install" 
+        sudo yum install -y $to_install
+        echo "Installed packages:"
+        echo "$to_install"
+else
+        echo "No packages need to be installed."
+fi
+
+if [[ -n $already_installed ]]; then
+        echo "Already available packages:" 
+        echo "$already_installed"
+fi
+                                                                                                         41,1          Bot
+
+                                     
